@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试</title>
+    <link href="/css/leaflet.css" type="text/css" rel="stylesheet"/> >
+    <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
+    <link rel="stylesheet" href="/css/leaflet.awesome-markers.css">
+    <script src="/js/leaflet.js"></script>
+    <script src="/js/leaflet.ChineseTmsProviders.js"></script>
+    <script src="/js/leaflet.awesome-markers.js"></script>
+
+</head>
+<body>
+
+<div id="map" style="width: 100vw;height: 100vh">
+</div>
+<script>
+    /**
+     * 智图地图内容
+     */
+    var normalm1 = L.tileLayer.chinaProvider('Geoq.Normal.Map', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var normalm2 = L.tileLayer.chinaProvider('Geoq.Normal.Color', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var normalm3 = L.tileLayer.chinaProvider('Geoq.Normal.PurplishBlue', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var normalm4 = L.tileLayer.chinaProvider('Geoq.Normal.Gray', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var normalm5 = L.tileLayer.chinaProvider('Geoq.Normal.Warm', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var normalm6 = L.tileLayer.chinaProvider('Geoq.Normal.Cold', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    /**
+     * 天地图内容
+     */
+    var normalm = L.tileLayer.chinaProvider('TianDiTu.Normal.Map', {
+            maxZoom: 18,
+            minZoom: 5
+        }),
+        normala = L.tileLayer.chinaProvider('TianDiTu.Normal.Annotion', {
+            maxZoom: 18,
+            minZoom: 5
+        }),
+        imgm = L.tileLayer.chinaProvider('TianDiTu.Satellite.Map', {
+            maxZoom: 18,
+            minZoom: 5
+        }),
+        imga = L.tileLayer.chinaProvider('TianDiTu.Satellite.Annotion', {
+            maxZoom: 18,
+            minZoom: 5
+        });
+
+    var normal = L.layerGroup([normalm, normala]),
+        image = L.layerGroup([imgm, imga]);
+    /**
+     * 谷歌
+     */
+    var normalMap = L.tileLayer.chinaProvider('Google.Normal.Map', {
+            maxZoom: 18,
+            minZoom: 5
+        }),
+        satelliteMap = L.tileLayer.chinaProvider('Google.Satellite.Map', {
+            maxZoom: 18,
+            minZoom: 5
+        });
+    /**
+     * 高德地图
+     */
+    var Gaode = L.tileLayer.chinaProvider('GaoDe.Normal.Map', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var Gaodimgem = L.tileLayer.chinaProvider('GaoDe.Satellite.Map', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var Gaodimga = L.tileLayer.chinaProvider('GaoDe.Satellite.Annotion', {
+        maxZoom: 18,
+        minZoom: 5
+    });
+    var Gaodimage = L.layerGroup([Gaodimgem, Gaodimga]);
+
+
+
+    var baseLayers = {
+        "智图地图": normalm1,
+        "智图多彩": normalm2,
+        "智图午夜蓝": normalm3,
+        "智图灰色": normalm4,
+        "智图暖色": normalm5,
+        "智图冷色": normalm6,
+        "天地图": normal,
+        "天地图影像": image,
+        "谷歌地图": normalMap,
+        "谷歌影像": satelliteMap,
+        "高德地图": Gaode,
+        "高德影像": Gaodimage,
+
+    }
+
+    var map = L.map("map", {
+        center: [22.51712, 114.02792],
+        zoom: 18,
+        layers: [image],
+        zoomControl: false
+    });
+
+
+    L.control.layers(baseLayers, null).addTo(map);
+    L.control.zoom({
+        zoomInTitle: '放大',
+        zoomOutTitle: '缩小'
+    }).addTo(map);
+
+    //标记点
+
+    // Creates a red marker with the coffee icon
+    var redMarker = L.AwesomeMarkers.icon({
+        icon: 'coffee',
+        markerColor: 'red'
+    });
+
+
+    //设置鸟类图层
+    var layerbird = [];
+    var markersbird=[
+        {"lat":22.52843,"lng":114.00828,"name":"黄嘴白鹭"},
+        {"lat":22.52708,"lng":114.01268,"name":"黄嘴白鹭"},
+        {"lat":22.51697,"lng":114.0307,"name":"黄嘴白鹭"},
+        {"lat":22.52776,"lng":114.01028,"name":"黑脸琵鹭"},
+        {"lat":22.52214,"lng":114.00732,"name":"黑脸琵鹭"},
+        {"lat":22.51321,"lng":114.02311,"name":"黑脸琵鹭"},
+        {"lat":22.51257,"lng":114.02605,"name":"黑嘴鸥"},
+        {"lat":22.51779,"lng":114.01858,"name":"黑嘴鸥"},
+        {"lat":22.51975,"lng":114.01371,"name":"黑嘴鸥"},
+        {"lat":22.52369,"lng":114.00311,"name":"黑嘴鸥"},
+        {"lat":22.52091,"lng":114.01011,"name":"鹮"}
+        ]
+    for(var i = 0;i< markersbird.length;i++){
+
+
+
+        var layer = new L.marker([markersbird[i].lat, markersbird[i].lng], {icon: redMarker})
+           // .bindPopup("<b>Hello world!</b><br />I am a popup."+markersbird[i].name).openPopup();
+            .bindPopup('<p>一个图像: <img src="/images/layers.png" alt="Smiley face" width="32" height="32"></p>').openPopup();
+
+        layerbird.push(layer);
+
+    }
+    var myGroup=L.layerGroup(layerbird);
+    map.addLayer(myGroup);
+
+
+    //设置植物图层
+    var layertree= [];
+    var markers=[];
+    for(var i = 0;i< markers.length;i++){
+
+        var layer = new L.marker([markers[i].lat, markers[i].lng], {icon: redMarker});
+        layerbird.push(layer);
+
+    }
+    var myGroup=L.layerGroup(layertree);
+    map.addLayer(myGroup);
+
+    /*L.marker(
+        [22.52221, 114.01305],
+        {icon: redMarker}
+        ).addTo(map).bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
+*/
+
+
+
+
+    //弹出面板
+    var popup = L.popup();
+
+    function onMapClick(e) {
+        popup
+            .setLatLng(e.latlng)
+            .setContent("You clicked the map at " + e.latlng.toString())
+            .openOn(map);
+    }
+    //添加click时间
+    map.on('click', onMapClick);
+</script>
+</body>
+</html>
