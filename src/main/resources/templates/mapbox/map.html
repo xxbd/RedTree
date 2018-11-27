@@ -9,10 +9,16 @@
     <script src="/js/leaflet.js"></script>
     <script src="/js/leaflet.ChineseTmsProviders.js"></script>
     <script src="/js/leaflet.awesome-markers.js"></script>
+    <script src="/js/jquery-2.1.3.min.js"></script>
 
 </head>
 <body>
-
+<button id="tree"  c="false" >植物分布</button>
+<button id="animal" c="false">动物分布</button>
+<button id="building" c="false">建筑分布</button>
+<button id="core" c="false">核心区</button>
+<button id="buffer" c="false" >缓冲区</button>
+<button id="experiment" c="false" >实验区</button>
 <div id="map" style="width: 100vw;height: 100vh">
 </div>
 <script>
@@ -56,11 +62,11 @@
         }),
         imgm = L.tileLayer.chinaProvider('TianDiTu.Satellite.Map', {
             maxZoom: 18,
-            minZoom: 5
+            minZoom: 16
         }),
         imga = L.tileLayer.chinaProvider('TianDiTu.Satellite.Annotion', {
             maxZoom: 18,
-            minZoom: 5
+            minZoom: 16
         });
 
     var normal = L.layerGroup([normalm, normala]),
@@ -114,9 +120,12 @@
     var map = L.map("map", {
         center: [22.51712, 114.02792],
         zoom: 18,
-        layers: [image],
         zoomControl: false
     });
+    // 影像
+    L.tileLayer("http://t{s}.tianditu.cn/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={z}&TileRow={y}&TileCol={x}&style=default&format=tiles", {
+        subdomains: ["0", "1", "2", "3", "4", "5", "6", "7"]
+    }).addTo(map);
 
 
     L.control.layers(baseLayers, null).addTo(map);
@@ -126,61 +135,306 @@
     }).addTo(map);
 
     //标记点
+   //控制点击按钮
 
     // Creates a red marker with the coffee icon
     var redMarker = L.AwesomeMarkers.icon({
         icon: 'coffee',
         markerColor: 'red'
     });
+    var blueMarker = L.AwesomeMarkers.icon({
+        icon: 'coffee',
+        markerColor: 'blue'
+    });
+    var greenMarker = L.AwesomeMarkers.icon({
+        icon: 'coffee',
+        markerColor: 'green'
+    });
 
+  //动物区
+    $("#animal").click(function() {
+        if ($("#animal").attr("c")=="false" ) {
 
-    //设置鸟类图层
-    var layerbird = [];
-    var markersbird=[
-        {"lat":22.52843,"lng":114.00828,"name":"黄嘴白鹭"},
-        {"lat":22.52708,"lng":114.01268,"name":"黄嘴白鹭"},
-        {"lat":22.51697,"lng":114.0307,"name":"黄嘴白鹭"},
-        {"lat":22.52776,"lng":114.01028,"name":"黑脸琵鹭"},
-        {"lat":22.52214,"lng":114.00732,"name":"黑脸琵鹭"},
-        {"lat":22.51321,"lng":114.02311,"name":"黑脸琵鹭"},
-        {"lat":22.51257,"lng":114.02605,"name":"黑嘴鸥"},
-        {"lat":22.51779,"lng":114.01858,"name":"黑嘴鸥"},
-        {"lat":22.51975,"lng":114.01371,"name":"黑嘴鸥"},
-        {"lat":22.52369,"lng":114.00311,"name":"黑嘴鸥"},
-        {"lat":22.52091,"lng":114.01011,"name":"鹮"}
+        //设置鸟类图层
+        var layerbird = [];
+        var markersbird = [
+            {"lat": 22.52843, "lng": 114.00828, "name": "黄嘴白鹭"},
+            {"lat": 22.52708, "lng": 114.01268, "name": "黄嘴白鹭"},
+            {"lat": 22.51697, "lng": 114.0307, "name": "黄嘴白鹭"},
+            {"lat": 22.52776, "lng": 114.01028, "name": "黑脸琵鹭"},
+            {"lat": 22.52214, "lng": 114.00732, "name": "黑脸琵鹭"},
+            {"lat": 22.51321, "lng": 114.02311, "name": "黑脸琵鹭"},
+            {"lat": 22.51257, "lng": 114.02605, "name": "黑嘴鸥"},
+            {"lat": 22.51779, "lng": 114.01858, "name": "黑嘴鸥"},
+            {"lat": 22.51975, "lng": 114.01371, "name": "黑嘴鸥"},
+            {"lat": 22.52369, "lng": 114.00311, "name": "黑嘴鸥"},
+            {"lat": 22.52091, "lng": 114.01011, "name": "鹮"}
         ]
-    for(var i = 0;i< markersbird.length;i++){
+        for (var i = 0; i < markersbird.length; i++) {
 
 
+            var layer = new L.marker([markersbird[i].lat, markersbird[i].lng], {icon: blueMarker})
+                .bindPopup("<b>Hello world!</b><br />I am a popup." + markersbird[i].name).openPopup(true);
+            // .bindPopup('<p>一个图像: <img src="/images/layers.png" alt="Smiley face" width="32" height="32"></p>').openPopup();
 
-        var layer = new L.marker([markersbird[i].lat, markersbird[i].lng], {icon: redMarker})
-           // .bindPopup("<b>Hello world!</b><br />I am a popup."+markersbird[i].name).openPopup();
-            .bindPopup('<p>一个图像: <img src="/images/layers.png" alt="Smiley face" width="32" height="32"></p>').openPopup();
+            layerbird.push(layer);
 
-        layerbird.push(layer);
+        }
+        annimalGroup = L.layerGroup(layerbird);
 
-    }
-    var myGroup=L.layerGroup(layerbird);
-    map.addLayer(myGroup);
+        map.addLayer(annimalGroup);
+        $("#animal").attr("c","true");
+    }else{
+
+            $("#animal").attr("c","false");
+            annimalGroup.clearLayers();
+
+        }
+    });
+
+    //植物区
+    $("#tree").click(function(){
+        if ($("#tree").attr("c")=="false" ) {
+            //设置植物图层
+            var layerbird = [];
+            var markersbird = [
+                {"lat": 22.52906, "lng": 114.00049, "name": "樟树"},
+                {"lat": 22.52934, "lng": 114.00088, "name": "白桂木"},
+                {"lat": 22.52898, "lng": 114.00169, "name": "中华结缕草"},
+                {"lat": 22.52514, "lng": 114.01641, "name": "中华结缕草"},
+                {"lat": 22.52458, "lng": 114.01912, "name": "白桂木"},
+                {"lat": 22.51674, "lng": 114.02834, "name": "中华结缕草"},
+            ]
+            for (var i = 0; i < markersbird.length; i++) {
 
 
-    //设置植物图层
-    var layertree= [];
-    var markers=[];
-    for(var i = 0;i< markers.length;i++){
+                var layer = new L.marker([markersbird[i].lat, markersbird[i].lng], {icon: greenMarker})
+                    .bindPopup("<b>Hello world!</b><br />I am a popup." + markersbird[i].name).openPopup(true);
+                // .bindPopup('<p>一个图像: <img src="/images/layers.png" alt="Smiley face" width="32" height="32"></p>').openPopup();
 
-        var layer = new L.marker([markers[i].lat, markers[i].lng], {icon: redMarker});
-        layerbird.push(layer);
+                layerbird.push(layer);
 
-    }
-    var myGroup=L.layerGroup(layertree);
-    map.addLayer(myGroup);
+            }
+            treeGroup = L.layerGroup(layerbird);
 
+            map.addLayer(treeGroup);
+            map.setView([22.52458, 114.01912],17);
+            $("#tree").attr("c","true");
+        }else{
+            $("#tree").attr("c","false");
+            treeGroup.clearLayers();
+
+        }
+    });
+     //建筑物
+    $("#building").click(function(){
+        if ($("#building").attr("c")=="false" ) {
+            //设置植物图层
+            var layerbird = [];
+            var markersbird = [
+                {"lat":22.53113,"lng":114.00315,"name":"保护区管理局"},
+                {"lat":22.51681,"lng":114.03281,"name":"福田管理站"},
+                {"lat":22.53144,"lng":114.00294,"name":"管理局"},
+                {"lat":22.53109,"lng":114.00217,"name":"标本馆"},
+                {"lat":22.5295,"lng":114.00212,"name":"疫源疫病检测院"},
+                {"lat":22.52887,"lng":114.00238,"name":"有害生物检测点"},
+                {"lat":22.52954,"lng":114.00225,"name":"监控塔"},
+                {"lat":22.5268,"lng":114.00813,"name":"宣教点"},
+                {"lat":22.52465,"lng":114.01513,"name":"有害生物检测点"},
+                {"lat":22.52429,"lng":114.01614,"name":"监控塔"},
+                {"lat":22.52295,"lng":114.02065,"name":"拦水闸口"},
+                {"lat":22.51837,"lng":114.02775,"name":"拦水闸口"},
+                {"lat":22.51649,"lng":114.02936,"name":"拦水闸口"},
+                {"lat":22.51379,"lng":114.03149,"name":"拦水闸口"},
+                {"lat":22.51724,"lng":114.03206,"name":"野生动物救治点"},
+                {"lat":22.51701,"lng":114.03253,"name":"鸟类环志站"},
+                {"lat":22.51677,"lng":114.03315,"name":"有害生物防治站"},
+                {"lat":22.51649,"lng":114.03212,"name":"生态定位检测站"},
+                {"lat":22.51615,"lng":114.0326,"name":"管理站"}
+            ]
+            for (var i = 0; i < markersbird.length; i++) {
+
+
+                var layer = new L.marker([markersbird[i].lat, markersbird[i].lng], {icon: redMarker})
+                    .bindPopup("<b>Hello world!</b><br />I am a popup." + markersbird[i].name).openPopup(true);
+                // .bindPopup('<p>一个图像: <img src="/images/layers.png" alt="Smiley face" width="32" height="32"></p>').openPopup();
+
+                layerbird.push(layer);
+
+            }
+            buildingGroup = L.layerGroup(layerbird);
+
+            map.addLayer(buildingGroup);
+            $("#building").attr("c","true");
+        }else{
+            $("#building").attr("c","false");
+            buildingGroup.clearLayers();
+
+        }
+    });
+
+    //核心区
+    $("#core").click(function() {
+        if ($("#core").attr("c")=="false" ) {
+            var layercore = [];
+            var markerscore = new  L.multiPolygon([
+                [
+                    [22.5156527777777,  114.015913888888 ],
+                    [22.5202055555555,  114.018541666666 ],
+                    [22.5205055555555,  114.022363888888 ],
+                    [22.5224416666666,  114.018488888888 ],
+                    [22.5234583333333,  114.018630555555 ],
+                    [22.5233694444444,  114.019577777777 ],
+                    [22.522575,  114.02175 ],
+                    [22.5203166666666,  114.025402777777 ],
+                    [ 22.5131861111111, 114.031216666666 ],
+                    [22.5087666666666, 114.028738888888 ]
+                ],
+                [
+                    [22.5282222222222, 114.001413888888 ],
+                    [ 22.5295111111111,114.002508333333 ],
+                    [ 22.5277055555555, 114.005547222222 ],
+                    [22.5255027777777, 114.009725 ],
+                    [22.5237722222222,  114.013205555555 ],
+                    [22.5247416666666, 114.0144 ],
+                    [22.5237888888888,  114.014669444444 ],
+                    [22.5240611111111, 114.014613888888 ],
+                    [22.5226694444444,  114.014211111111 ],
+                    [22.5222361111111,  114.013638888888 ],
+                    [22.5269027777777, 114.005458333333 ],
+                    [22.5281472222222, 114.002825 ],
+                ]
+
+            ],{color:'red',opacity:'0.8',weight:'3'}) .bindPopup('核心区');
+
+            layercore.push(markerscore)
+            coreGroup = L.layerGroup(layercore);
+            map.addLayer(coreGroup);
+            $("#core").attr("c","true");
+        }else{
+
+            $("#core").attr("c","false");
+            coreGroup.clearLayers();
+
+        }
+    });
+
+    //缓冲区
+    $("#buffer").click(function() {
+        if ($("#buffer").attr("c")=="false" ) {
+            var layerbuffer = [];
+            var markersbuffer = new  L.multiPolygon([
+                [
+                    [22.52575, 113.997775 ],
+                    [22.52795, 113.997083333333 ],
+                    [22.5284444444444,113.998341666666 ],
+                    [22.5276611111111, 114.000544444444 ],
+                    [22.5282222222222, 114.001413888888 ],
+                    [22.5281472222222, 114.002825 ],
+                    [22.5269027777777, 114.005458333333 ],
+                    [22.5222361111111, 114.013638888888 ],
+                    [22.5226694444444, 114.014211111111 ],
+                    [ 22.5221444444444, 114.014516666666 ],
+                    [22.5257833333333, 114.016105555555 ],
+                    [22.5256361111111,  114.016697222222 ],
+                    [22.5240583333333,  114.016811111111 ],
+                    [22.5228, 114.016166666666 ],
+                    [22.5224416666666, 114.018488888888 ],
+                    [22.5205055555555, 114.022363888888 ],
+                    [22.5202055555555, 114.018541666666 ],
+                    [22.5156527777777, 114.015913888888 ],
+                    [22.5195166666666, 114.008102777777 ]
+                ],
+                [
+                   [22.5131861111111,114.031216666666 ],
+                   [22.5121916666666, 114.032133333333 ],
+                   [22.508175,114.029738888888 ], [22.5087666666666,114.028738888888 ],
+                ]
+
+
+            ],{color:'yellow',opacity:'0.8',weight:'3'}) .bindPopup('缓冲区');
+
+            layerbuffer.push(markersbuffer)
+            bufferGroup = L.layerGroup(layerbuffer);
+            map.addLayer(bufferGroup);
+            $("#buffer").attr("c","true");
+        }else{
+
+            $("#buffer").attr("c","false");
+            bufferGroup.clearLayers();
+
+        }
+    });
+
+    //实验区
+    $("#experiment").click(function() {
+        if ($("#experiment").attr("c")=="false" ) {
+            var layerexperiment = [];
+            var markersexperiment = new  L.multiPolygon([
+                [
+                    [22.52575,113.997775 ],
+                    [22.5290916666666,113.995966666666 ],
+                    [22.5297916666666, 113.997872222222 ],
+                    [22.5296333333333, 114.012627777777 ],
+                    [22.527775, 114.01245 ],
+                    [22.5247416666666, 114.0144 ],
+                    [22.5237722222222, 114.013205555555 ],
+                    [22.5255027777777, 114.009725 ],
+                    [22.5277055555555, 114.005547222222 ],
+                    [22.5295111111111, 114.002508333333 ],
+                    [22.5282222222222, 114.001413888888 ],
+                    [22.5276611111111, 114.000544444444 ],
+                    [22.5284444444444, 113.998341666666 ],
+                    [22.52795, 113.997083333333 ],
+                ],
+                [
+                    [22.5296333333333, 114.012627777777 ],
+                    [22.5297777777777, 114.013302777777 ],
+                    [22.5268166666666, 114.016016666666 ],
+                    [22.5220277777777, 114.023591666666 ],
+                    [22.5163, 114.033233333333 ],
+                    [22.513925, 114.031616666666 ],
+                    [22.5132611111111, 114.032769444444 ],
+                    [22.5121916666666, 114.032133333333 ],
+                    [22.5131861111111, 114.031216666666 ],
+                    [22.5203166666666, 114.025402777777 ],
+                    [22.522575, 114.02175 ],
+                    [22.5233694444444, 114.019577777777 ],
+                    [22.5234583333333, 114.018630555555 ],
+                    [22.5224416666666, 114.018488888888 ],
+                    [22.5228, 114.016166666666 ],
+                    [22.5240583333333, 114.016811111111 ],
+                    [22.5256361111111, 114.016697222222 ],
+                    [22.5257833333333, 114.016105555555 ],
+                    [22.5221444444444, 114.014516666666 ],
+                    [22.5226694444444, 114.014211111111 ],
+                    [22.5240611111111, 114.014613888888 ],
+                    [22.5237888888888, 114.014669444444 ],
+                    [22.5247416666666, 114.0144 ],
+                    [22.527775, 114.01245 ],
+                ]
+
+
+            ],{color:'green',opacity:'0.8',weight:'3'}) .bindPopup('实验区');
+
+            layerexperiment.push(markersexperiment)
+            experimentGroup = L.layerGroup(layerexperiment);
+            map.addLayer(experimentGroup);
+            $("#experiment").attr("c","true");
+        }else{
+
+            $("#experiment").attr("c","false");
+            experimentGroup.clearLayers();
+
+        }
+    });
     /*L.marker(
         [22.52221, 114.01305],
         {icon: redMarker}
         ).addTo(map).bindPopup("<b>Hello world!</b><br />I am a popup.").openPopup();
 */
+
+
 
 
 
