@@ -67,7 +67,6 @@
     //locationfound     LocationEvent    开枪时，地理位置（使用locate方法）去成功
     leafletMap.on('locationfound', onLocationFound);
     leafletMap.on('locationerror', onLocationError);
-
     //地理定位的方法
     //尝试使用地理定位API定位用户，射击locationfound在成功的一个位置或数据事件locationerror事件的失败，和可选的设置地图视图检测精度相对于用户的位置（或世界观如果定位失败）
     leafletMap.locate({

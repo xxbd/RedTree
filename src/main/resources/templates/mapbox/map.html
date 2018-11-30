@@ -2,24 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>测试</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>红树林自然保护区</title>
     <link href="/css/leaflet.css" type="text/css" rel="stylesheet"/> >
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/slide/L.Control.SlideMenu.css">
     <link rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
     <link rel="stylesheet" href="/css/leaflet.awesome-markers.css">
+    <link rel="stylesheet" href="/Licon/L.Icon.Pulse.css" />
+    <link rel="stylesheet" href="/button/easy-button.css"/>
     <script src="/js/leaflet.js"></script>
+    <script src="/slide/L.Control.SlideMenu.js"></script>
     <script src="/js/leaflet.ChineseTmsProviders.js"></script>
     <script src="/js/leaflet.awesome-markers.js"></script>
+    <script src="/Licon/L.Icon.Pulse.js"></script>
+    <script src="/button/easy-button.js"></script>
     <script src="/js/jquery-2.1.3.min.js"></script>
 
+
 </head>
+<style>
+    body {
+        padding: 0;
+        margin: 0;
+    }
+    html, body, #map {
+        height: 100%;
+        width: 100vw;
+    }
+</style>
 <body>
-<button id="tree"  c="false" >植物分布</button>
-<button id="animal" c="false">动物分布</button>
-<button id="building" c="false">建筑分布</button>
-<button id="core" c="false">核心区</button>
-<button id="buffer" c="false" >缓冲区</button>
-<button id="experiment" c="false" >实验区</button>
-<div id="map" style="width: 100vw;height: 100vh">
+
+
+<div id="map" >
+    <button id="tree"  c="false"    style="display: none">植物分布</button>
+    <button id="animal" c="false" style="display: none">动物分布</button>
+    <button id="building" c="false" style="display: none">建筑分布</button>
+    <button id="core" c="false" style="display: none">核心区</button>
+    <button id="buffer" c="false"  style="display: none">缓冲区</button>
+    <button id="experiment" c="false"  style="display: none">实验区</button>
 </div>
 <script>
     /**
@@ -102,26 +123,29 @@
 
 
     var baseLayers = {
-        "智图地图": normalm1,
+/*        "智图地图": normalm1,
         "智图多彩": normalm2,
         "智图午夜蓝": normalm3,
         "智图灰色": normalm4,
         "智图暖色": normalm5,
-        "智图冷色": normalm6,
+        "智图冷色": normalm6,*/
         "天地图": normal,
         "天地图影像": image,
-        "谷歌地图": normalMap,
+       /* "谷歌地图": normalMap,
         "谷歌影像": satelliteMap,
         "高德地图": Gaode,
-        "高德影像": Gaodimage,
+        "高德影像": Gaodimage,*/
 
     }
 
     var map = L.map("map", {
-        center: [22.51712, 114.02792],
-        zoom: 18,
-        zoomControl: false
+        center: [22.52084, 114.01865],
+        zoom: 15,
+        layers: [normal],
+        zoomControl: false,
+        attributionControl:false
     });
+
     // 影像
     L.tileLayer("http://t{s}.tianditu.cn/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&LAYER=img&tileMatrixSet=w&TileMatrix={z}&TileRow={y}&TileCol={x}&style=default&format=tiles", {
         subdomains: ["0", "1", "2", "3", "4", "5", "6", "7"]
@@ -137,6 +161,13 @@
     //标记点
    //控制点击按钮
 
+    //波动点
+    //动物
+    var pulsingIcon = L.icon.pulse({iconSize:[15,15],color:'yellow',fillColor:'yellow'});
+    //植物
+    var treepulsingIcon = L.icon.pulse({iconSize:[15,15],color:'green',fillColor:'green'});
+    //建筑
+    var buildpulsingIcon = L.icon.pulse({iconSize:[15,15],color:'red',fillColor:'red'});
     // Creates a red marker with the coffee icon
     var redMarker = L.AwesomeMarkers.icon({
         icon: 'coffee',
@@ -150,31 +181,32 @@
         icon: 'coffee',
         markerColor: 'green'
     });
-
-  //动物区
-    $("#animal").click(function() {
-        if ($("#animal").attr("c")=="false" ) {
+    jQuery.noConflict();
+    //动物区
+    jQuery("#animal").click(function() {
+        if (jQuery("#animal").attr("c")=="false" ) {
 
         //设置鸟类图层
         var layerbird = [];
         var markersbird = [
-            {"lat": 22.52843, "lng": 114.00828, "name": "黄嘴白鹭"},
-            {"lat": 22.52708, "lng": 114.01268, "name": "黄嘴白鹭"},
-            {"lat": 22.51697, "lng": 114.0307, "name": "黄嘴白鹭"},
-            {"lat": 22.52776, "lng": 114.01028, "name": "黑脸琵鹭"},
-            {"lat": 22.52214, "lng": 114.00732, "name": "黑脸琵鹭"},
-            {"lat": 22.51321, "lng": 114.02311, "name": "黑脸琵鹭"},
-            {"lat": 22.51257, "lng": 114.02605, "name": "黑嘴鸥"},
-            {"lat": 22.51779, "lng": 114.01858, "name": "黑嘴鸥"},
-            {"lat": 22.51975, "lng": 114.01371, "name": "黑嘴鸥"},
-            {"lat": 22.52369, "lng": 114.00311, "name": "黑嘴鸥"},
-            {"lat": 22.52091, "lng": 114.01011, "name": "鹮"}
+            {"lat": 22.52843, "lng": 114.00828, "name": "黄嘴白鹭","nc": "hzbl"},
+            {"lat": 22.52708, "lng": 114.01268, "name": "黄嘴白鹭","nc": "hzbl"},
+            {"lat": 22.51697, "lng": 114.0307, "name": "黄嘴白鹭","nc": "hzbl"},
+            {"lat": 22.52776, "lng": 114.01028, "name": "黑脸琵鹭","nc": "hlpl"},
+            {"lat": 22.52214, "lng": 114.00732, "name": "黑脸琵鹭","nc": "hlpl"},
+            {"lat": 22.51321, "lng": 114.02311, "name": "黑脸琵鹭","nc": "hlpl"},
+            {"lat": 22.51257, "lng": 114.02605, "name": "黑嘴鸥","nc": "hzo"},
+            {"lat": 22.51779, "lng": 114.01858, "name": "黑嘴鸥","nc": "hzo"},
+            {"lat": 22.51975, "lng": 114.01371, "name": "黑嘴鸥","nc": "hzo"},
+            {"lat": 22.52369, "lng": 114.00311, "name": "黑嘴鸥","nc": "hzo"},
+            {"lat": 22.52091, "lng": 114.01011, "name": "鹮","nc": "h"}
         ]
         for (var i = 0; i < markersbird.length; i++) {
 
 
-            var layer = new L.marker([markersbird[i].lat, markersbird[i].lng], {icon: blueMarker})
-                .bindPopup("<b>Hello world!</b><br />I am a popup." + markersbird[i].name).openPopup(true);
+            var layer = new L.marker([markersbird[i].lat, markersbird[i].lng], {icon: pulsingIcon})
+                //.bindPopup("<b>Hello world!</b><br />I am a popup." + markersbird[i].name).openPopup(true);
+        .bindPopup('<p style="text-align: center;"><a href="/introduce/'+markersbird[i].nc+'"> <img   style="vertical-align: middle;width: 100%"src="/img/'+markersbird[i].name+'.jpg" alt="Smiley face" width="100"  height="100"   ></a><br><textarea>我是'+markersbird[i].name+'点击图片跳转详情介绍</textarea></p>').openPopup();
             // .bindPopup('<p>一个图像: <img src="/images/layers.png" alt="Smiley face" width="32" height="32"></p>').openPopup();
 
             layerbird.push(layer);
@@ -183,18 +215,19 @@
         annimalGroup = L.layerGroup(layerbird);
 
         map.addLayer(annimalGroup);
-        $("#animal").attr("c","true");
+            map.setView([22.52458, 114.01912],15);
+            jQuery("#animal").attr("c","true");
     }else{
 
-            $("#animal").attr("c","false");
+            jQuery("#animal").attr("c","false");
             annimalGroup.clearLayers();
 
         }
     });
 
     //植物区
-    $("#tree").click(function(){
-        if ($("#tree").attr("c")=="false" ) {
+    jQuery("#tree").click(function(){
+        if (jQuery("#tree").attr("c")=="false" ) {
             //设置植物图层
             var layerbird = [];
             var markersbird = [
@@ -208,8 +241,9 @@
             for (var i = 0; i < markersbird.length; i++) {
 
 
-                var layer = new L.marker([markersbird[i].lat, markersbird[i].lng], {icon: greenMarker})
-                    .bindPopup("<b>Hello world!</b><br />I am a popup." + markersbird[i].name).openPopup(true);
+                var layer = new L.marker([markersbird[i].lat, markersbird[i].lng], {icon: treepulsingIcon})
+                  //  .bindPopup("<b>Hello world!</b><br />I am a popup." + markersbird[i].name).openPopup(true);
+            .bindPopup('<p style="text-align: center;"> <img  style="width: 100%;"   style="vertical-align: middle;"src="/img/'+markersbird[i].name+'.jpg" alt="Smiley face" width="100"  height="100"   onerror="this.src=\'/img/tree.jpg\'" ><br><textarea>我是'+markersbird[i].name+'点击图片跳转详情介绍</textarea></p>').openPopup(true);
                 // .bindPopup('<p>一个图像: <img src="/images/layers.png" alt="Smiley face" width="32" height="32"></p>').openPopup();
 
                 layerbird.push(layer);
@@ -218,18 +252,18 @@
             treeGroup = L.layerGroup(layerbird);
 
             map.addLayer(treeGroup);
-            map.setView([22.52458, 114.01912],17);
-            $("#tree").attr("c","true");
+            map.setView([22.52458, 114.01912],15);
+            jQuery("#tree").attr("c","true");
         }else{
-            $("#tree").attr("c","false");
+            jQuery("#tree").attr("c","false");
             treeGroup.clearLayers();
 
         }
     });
      //建筑物
-    $("#building").click(function(){
-        if ($("#building").attr("c")=="false" ) {
-            //设置植物图层
+    jQuery("#building").click(function(){
+        if (jQuery("#building").attr("c")=="false" ) {
+            //设置建筑物图层
             var layerbird = [];
             var markersbird = [
                 {"lat":22.53113,"lng":114.00315,"name":"保护区管理局"},
@@ -255,9 +289,9 @@
             for (var i = 0; i < markersbird.length; i++) {
 
 
-                var layer = new L.marker([markersbird[i].lat, markersbird[i].lng], {icon: redMarker})
-                    .bindPopup("<b>Hello world!</b><br />I am a popup." + markersbird[i].name).openPopup(true);
-                // .bindPopup('<p>一个图像: <img src="/images/layers.png" alt="Smiley face" width="32" height="32"></p>').openPopup();
+                var layer = new L.marker([markersbird[i].lat, markersbird[i].lng], {icon: buildpulsingIcon})
+                    //.bindPopup("<b>Hello world!</b><br />I am a popup." + markersbird[i].name).openPopup(true);
+                 .bindPopup('<p style="text-align: center;"> <img   style="vertical-align: middle;"src="/img/'+markersbird[i].name+'.jpg" alt="Smiley face"  style="width: 100%;"   height="100"  onerror="this.src=\'/img/build.jpg\'"  ><br><textarea>我是'+markersbird[i].name+'点击图片跳转详情介绍</textarea></p>').openPopup();
 
                 layerbird.push(layer);
 
@@ -265,17 +299,18 @@
             buildingGroup = L.layerGroup(layerbird);
 
             map.addLayer(buildingGroup);
-            $("#building").attr("c","true");
+            map.setView([22.52458, 114.01912],15);
+            jQuery("#building").attr("c","true");
         }else{
-            $("#building").attr("c","false");
+            jQuery("#building").attr("c","false");
             buildingGroup.clearLayers();
 
         }
     });
 
     //核心区
-    $("#core").click(function() {
-        if ($("#core").attr("c")=="false" ) {
+    jQuery("#core").click(function() {
+        if (jQuery("#core").attr("c")=="false" ) {
             var layercore = [];
             var markerscore = new  L.multiPolygon([
                 [
@@ -310,18 +345,17 @@
             layercore.push(markerscore)
             coreGroup = L.layerGroup(layercore);
             map.addLayer(coreGroup);
-            $("#core").attr("c","true");
+            map.setView([22.52458, 114.01912],15);
+            jQuery("#core").attr("c","true");
         }else{
-
-            $("#core").attr("c","false");
+            jQuery("#core").attr("c","false");
             coreGroup.clearLayers();
-
         }
     });
 
     //缓冲区
-    $("#buffer").click(function() {
-        if ($("#buffer").attr("c")=="false" ) {
+    jQuery("#buffer").click(function() {
+        if (jQuery("#buffer").attr("c")=="false" ) {
             var layerbuffer = [];
             var markersbuffer = new  L.multiPolygon([
                 [
@@ -356,19 +390,20 @@
 
             layerbuffer.push(markersbuffer)
             bufferGroup = L.layerGroup(layerbuffer);
+            map.setView([22.52458, 114.01912],15);
             map.addLayer(bufferGroup);
-            $("#buffer").attr("c","true");
+            jQuery("#buffer").attr("c","true");
         }else{
 
-            $("#buffer").attr("c","false");
+            jQuery("#buffer").attr("c","false");
             bufferGroup.clearLayers();
 
         }
     });
 
     //实验区
-    $("#experiment").click(function() {
-        if ($("#experiment").attr("c")=="false" ) {
+    jQuery("#experiment").click(function() {
+        if (jQuery("#experiment").attr("c")=="false" ) {
             var layerexperiment = [];
             var markersexperiment = new  L.multiPolygon([
                 [
@@ -420,10 +455,11 @@
             layerexperiment.push(markersexperiment)
             experimentGroup = L.layerGroup(layerexperiment);
             map.addLayer(experimentGroup);
-            $("#experiment").attr("c","true");
+            map.setView([22.52458, 114.01912],15);
+            jQuery("#experiment").attr("c","true");
         }else{
 
-            $("#experiment").attr("c","false");
+            jQuery("#experiment").attr("c","false");
             experimentGroup.clearLayers();
 
         }
@@ -449,7 +485,79 @@
             .openOn(map);
     }
     //添加click时间
-    map.on('click', onMapClick);
+    //map.on('click', onMapClick);
+
+    var animalButton = L.easyButton({
+        states: [{
+            stateName: 'animal',        // name the state
+            icon:      'fa-twitter',               // and define its properties
+            title:     '动物',      // like its title
+            onClick: function(btn, map) {       // and its callback
+                /* map.setView([46.25,-121.8],10);
+                 btn.state('zoom-to-school');    // change state on click!*/
+                document.getElementById("animal").click()
+            }
+        }]
+    });
+    var treeButton = L.easyButton({
+        states: [{
+            stateName: 'tree',        // name the state
+            icon:      'fa-tree',               // and define its properties
+            title:     '植物',      // like its title
+            onClick: function(btn, map) {       // and its callback
+                document.getElementById("tree").click()
+            }
+        }]
+    });
+    var buildButton = L.easyButton({
+        states: [{
+            stateName: 'build',        // name the state
+            icon:      'fa-building',               // and define its properties
+            title:     '建筑',      // like its title
+            onClick: function(btn, map) {     // and its callback
+                document.getElementById("building").click()
+            }
+        }]
+    });
+    var coreButton = L.easyButton({
+        states: [{
+            stateName: 'core',        // name the state
+            icon:      'fa-star',               // and define its properties
+            title:     '核心区',      // like its title
+            onClick: function(btn, map) {     // and its callback
+                document.getElementById("core").click()
+            }
+        }]
+    });
+    var bufferButton = L.easyButton({
+        states: [{
+            stateName: 'buffer',        // name the state
+            icon:      'fa-star-half-o',               // and define its properties
+            title:     '缓冲区',      // like its title
+            onClick: function(btn, map) {     // and its callback
+                document.getElementById("buffer").click()
+            }
+        }]
+    });
+    var experimentButton = L.easyButton({
+        states: [{
+            stateName: 'experiment',        // name the state
+            icon:      'fa-spinner',               // and define its properties
+            title:     '实验区',      // like its title
+            onClick: function(btn, map) {     // and its callback
+                document.getElementById("experiment").click()
+            }
+        }]
+    });
+
+    treeButton.addTo(map);
+    animalButton.addTo(map);
+    buildButton.addTo(map);
+    bufferButton.addTo(map);
+    experimentButton.addTo(map);
+
+    coreButton.addTo(map);
 </script>
+
 </body>
 </html>

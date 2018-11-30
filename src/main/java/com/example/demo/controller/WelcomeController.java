@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -11,6 +12,27 @@ public class WelcomeController {
     private ModelAndView mapBox(){
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("mapbox/mapbox");
+        return modelAndView;
+    }
+    //mapbox地图测试
+    @RequestMapping("/nld")
+    private ModelAndView nld(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("mapbox/nld");
+        return modelAndView;
+    }
+    //mapbox地图测试
+    @RequestMapping("/introduce/{nc}")
+    private ModelAndView animal(@PathVariable("nc")String nch){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("introduce/"+nch);
+        return modelAndView;
+    }
+    //mapbox地图测试
+    @RequestMapping("/sl")
+    private ModelAndView sl(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("sl/sl");
         return modelAndView;
     }
     //mapbox地图测试
